@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../api_service/quote_service.dart';
@@ -31,9 +32,9 @@ class _HomeViewState extends State<HomeView> {
 
   String greeting() {
     final hour = DateTime.now().hour;
-    if (hour < 12) return 'Good Morning, Rahma';
-    if (hour < 17) return 'Good Afternoon, Rahma';
-    return 'Good Evening, Rahma';
+    if (hour < 12) return 'Good Morning, ${user.email}';
+    if (hour < 17) return 'Good Afternoon,  ${user.email}';
+    return 'Good Evening,  ${user.email}';
   }
 
   Future<void> checkAndShowQuoteModePrompt() async {
@@ -149,6 +150,9 @@ class _HomeViewState extends State<HomeView> {
     await prefs.setStringList("favorites", fav);
   }
 
+  final user = FirebaseAuth.instance.currentUser!;
+
+
   @override
   Widget build(BuildContext context) {
     const Color cardBg = Colors.white;
@@ -159,13 +163,11 @@ class _HomeViewState extends State<HomeView> {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-
         title: Text(
           greeting(),
           style: const TextStyle(
               color: Colors.black87, fontWeight: FontWeight.w600),
         ),
-
         backgroundColor: Colors.transparent,
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.black87),

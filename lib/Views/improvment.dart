@@ -9,7 +9,7 @@ class ImprovmentView extends StatelessWidget {
       body: Column(
         children: [
           SizedBox(
-            child: Image.asset("assets/JPG/feeling.png", fit: BoxFit.fill,),
+            child: Image.asset("assets/JPG/improvment.png", fit: BoxFit.fill,),
             height: MediaQuery
                 .of(context)
                 .size

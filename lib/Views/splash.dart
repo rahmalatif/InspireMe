@@ -1,70 +1,64 @@
+import 'dart:async';
+import 'package:flutter/cupertino.dart';
+import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
-import 'package:inspireme/core/logic/helper_methods.dart';
+import 'package:flutter_svg/svg.dart';
 
-import 'name.dart';
-
-class SplashView extends StatelessWidget {
+class SplashView extends StatefulWidget {
   const SplashView({super.key});
 
   @override
+  State<SplashView> createState() => _SplashViewState();
+}
+
+class _SplashViewState extends State<SplashView> {
+  Timer? _timer;
+  final Duration splashDuration = const Duration(seconds: 5);
+  bool _navigated = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _timer = Timer(splashDuration, () {
+      _navigateToWelcomeIfStillHere();
+    });
+  }
+
+  void _navigateToWelcomeIfStillHere() {
+    if (!mounted) return;
+    final isCurrent = ModalRoute.of(context)?.isCurrent ?? false;
+    if (isCurrent && !_navigated) {
+      _navigated = true;
+      Navigator.pushReplacementNamed(context, '/welcome');
+    }
+  }
+
+  void _skipSplash() {
+    _timer?.cancel();
+    _navigateToWelcomeIfStillHere();
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: [
-          SizedBox.expand(
-            child: Image.asset(
-              "assets/JPG/splash.png",
-              fit: BoxFit.cover,
+    return GestureDetector(
+      onTap: _skipSplash,
+      child: Scaffold(
+        body: FadeInDownBig(
+          child: Center(
+            child: SvgPicture.asset(
+              "assets/SVG/logo.svg",
+              width: 200,
+              height: 200,
             ),
           ),
-
-          Center(
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Text(
-                "Welcome to our motivation app! Achieve your goals with daily motivation, goal tracking, reminders, and a supportive community. Let’s get started!",
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                  height: 1.4,
-                ),
-              ),
-            ),
-          ),
-
-          Positioned(
-            bottom: 40,
-            left: 0,
-            right: 0,
-            child: Center(
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, '/name');
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 140,
-                    vertical: 15,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                ),
-                child: const Text(
-                  "Get Started",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
